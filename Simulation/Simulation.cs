@@ -155,9 +155,9 @@ namespace NeuralLife.Simulation
             Color[] neighbors = new Color[neighborsCount];
 
             int neighborIterator = 0;
-            for(int i = -2; i <= position.X + 2; i++)
+            for(int i = -2; i <= 2; i++)
             {
-                for(int j = -2; j <= position.Y + 2; j++)
+                for(int j = -2; j <= 2; j++)
                 {
                     if(GetAtPosition(new Vector2(position.X + i, position.Y + j)) == null)
                     {
@@ -165,6 +165,7 @@ namespace NeuralLife.Simulation
                         continue;
                     }
                     neighbors[neighborIterator] = GetAtPosition(new Vector2(position.X + i, position.Y + j)).Color;
+                    neighborIterator++;
                 }
             }
 
