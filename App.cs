@@ -33,7 +33,7 @@ namespace NeuralLife
 
             float foodSpawnCount = 0.002f;
             float agentSpawnCount = 0.008f;
-            const uint foodLifetimeStep = 10;
+            const uint foodLifetimeStep = 5;
             const float foodSpawnStep = 0.0005f;
             const float spikeSpawnCount = 0.001f;
 
