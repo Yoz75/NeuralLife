@@ -3,6 +3,8 @@ using NeuralLife.Input;
 using NeuralLife.Rendering;
 using NeuralLife.Simulation;
 using NeuralLife.Simulation.Objects;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace NeuralLife
@@ -11,51 +13,49 @@ namespace NeuralLife
     {
         private IRenderer Renderer;
         private IInput Input;
+
+        private List<Action> InvokeOnUpdate = new List<Action>();
+
+        private Thread InputThread;
+
         public void Run()
         {
-            uint width = 160; //VideoMode.DesktopMode.Width / 6;
-            uint height = 96;// VideoMode.DesktopMode.Height / 6;
+            uint width = 160;
+            uint height = 96;
 
             Renderer = new SFMLRenderer();
             Input = new SFMLInput();
 
             Renderer.Setup(width, height, "wow!");
 
-            float foodSpawnCount = 0.002f;
-        //Ok, that is bullshit, but works
-        simulationStart:
-
             Simulation.Simulation simulation = new((int)width, (int)height);
             Color[,] colors;
-            simulation.RandomFill<Food>(0.2f);
-            simulation.RandomFill<Agent>(0.008f);
 
+            float foodSpawnCount = 0.002f;
+            float agentSpawnCount = 0.008f;
+            const uint foodLifetimeStep = 10;
             const float foodSpawnStep = 0.0005f;
             const float spikeSpawnCount = 0.001f;
 
-            while(true)            {
+            StartSimulation();
 
-                if(Input.IsKeyPressed(Keys.R))
+            InputThread = new Thread(GetInput);
+            InputThread.Name = "Input handle thread";
+            InputThread.Start();
+
+            while(true)
+            {
+                lock(InvokeOnUpdate)
                 {
-                    goto simulationStart;
+                    foreach(var action in InvokeOnUpdate)
+                    {
+                        action.Invoke();
+                    }
                 }
 
-                if(Input.IsKeyPressed(Keys.Q))
-                {
-                    simulation.RandomFill<Spike>(spikeSpawnCount);
-                }                
+                InvokeOnUpdate.Clear();
 
-                if(Input.IsKeyPressed(Keys.Add))
-                {
-                    foodSpawnCount += foodSpawnStep;
-                }
-                else if(Input.IsKeyPressed(Keys.Subtract))
-                {
-                    foodSpawnCount -= foodSpawnStep;
-                }
-
-                simulation.Update(); 
-
+                simulation.Update();
                 colors = simulation.AsColors();
                 Renderer.Update();
                 Renderer.Render(colors);
@@ -63,6 +63,59 @@ namespace NeuralLife
                 simulation.RandomFillIfNull<Food>(foodSpawnCount);
 
                 Thread.Sleep(10);
+            }
+
+            void StartSimulation()
+            {
+                simulation = new((int)width, (int)height);
+
+                simulation.RandomFill<Food>(foodSpawnCount);
+                simulation.RandomFill<Agent>(agentSpawnCount);
+            }
+
+            void GetInput()
+            {
+                while(true)
+                {
+                    Input.Update();
+                    lock(InvokeOnUpdate)
+                    {
+
+                        if(Input.IsKeyDown(Keys.R))
+                        {
+                            InvokeOnUpdate.Add(StartSimulation);
+                        }
+
+                        if(Input.IsKeyDown(Keys.Space))
+                        {
+                            InvokeOnUpdate.Add(() => Food.IsDispawn = !Food.IsDispawn);
+                        }
+
+                        if(Input.IsKeyDown(Keys.T))
+                        {
+                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += foodLifetimeStep);
+                        }
+                        else if(Input.IsKeyDown(Keys.Y))
+                        {
+                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= foodLifetimeStep);
+                        }
+
+                        if(Input.IsKeyDown(Keys.Q))
+                        {
+                            InvokeOnUpdate.Add(() => simulation.RandomFill<Spike>(spikeSpawnCount));
+                        }
+
+                        //Plus near backspace also will work
+                        if(Input.IsKeyDown(Keys.Add) || Input.IsKeyPressed(Keys.Equal))
+                        {
+                            InvokeOnUpdate.Add(() => foodSpawnCount += foodSpawnStep);
+                        }
+                        else if(Input.IsKeyDown(Keys.Subtract))
+                        {
+                            InvokeOnUpdate.Add(() => foodSpawnCount -= foodSpawnStep);
+                        }
+                    }
+                }
             }
         }
     }
