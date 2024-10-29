@@ -29,22 +29,29 @@ namespace NeuralLife
             Color[,] colors;
             simulation.RandomFill<Food>(0.2f);
             simulation.RandomFill<Agent>(0.008f);
-            simulation.RandomFill<Spike>(0.01f);
 
-            while(true)
-            {
+            const float foodSpawnStep = 0.0005f;
+            const float spikeSpawnCount = 0.001f;
+
+            while(true)            {
+
                 if(Input.IsKeyPressed(Keys.R))
                 {
                     goto simulationStart;
                 }
 
+                if(Input.IsKeyPressed(Keys.Q))
+                {
+                    simulation.RandomFill<Spike>(spikeSpawnCount);
+                }                
+
                 if(Input.IsKeyPressed(Keys.Add))
                 {
-                    foodSpawnCount += 0.001f;
+                    foodSpawnCount += foodSpawnStep;
                 }
                 else if(Input.IsKeyPressed(Keys.Subtract))
                 {
-                    foodSpawnCount -= 0.001f;
+                    foodSpawnCount -= foodSpawnStep;
                 }
 
                 simulation.Update(); 
