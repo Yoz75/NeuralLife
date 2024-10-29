@@ -29,6 +29,27 @@ namespace NeuralLife.Simulation
             }
         }
 
+        public void FillIfType<TStart, TResult>(float fillChance) 
+            where TResult : SimulationObject, new()
+        {
+            Random random = new Random();
+
+            for(int i = 0; i < GameField.GetLength(0); i++)
+            {
+                for(int j = 0; j < GameField.GetLength(1); j++)
+                {
+                    if(GetAtPosition(new Vector2(i, j)) is not TStart)
+                    {
+                        continue;
+                    }
+                    if(random.NextSingle() < fillChance)
+                    {
+                        SetAtPosition(new TResult(), new Vector2(i, j));
+                    }
+                }
+            }
+        }
+
         public void RandomFillIfNull<T>(float fillChance) where T : SimulationObject, new()
         {
             Random random = new Random();
@@ -135,9 +156,9 @@ namespace NeuralLife.Simulation
             SimulationObject[] neighbors = new SimulationObject[neighborsCount];
 
             int neighborIterator = 0;
-            for(int i = -2; i <= position.X + 2; i++)
+            for(int i = -2; i <= 2; i++)
             {
-                for(int j = -2; j <= position.Y + 2; j++)
+                for(int j = -2; j <= 2; j++)
                 {
                     if(GetAtPosition(new Vector2(i, j)) is T)
                     {
@@ -159,6 +180,10 @@ namespace NeuralLife.Simulation
             {
                 for(int j = -2; j <= 2; j++)
                 {
+                    if(i == 0 && j == 0)
+                    {
+                        continue;
+                    }
                     if(GetAtPosition(new Vector2(position.X + i, position.Y + j)) == null)
                     {
                         neighbors[neighborIterator] = new Color(0, 0, 0);
@@ -174,15 +199,20 @@ namespace NeuralLife.Simulation
 
         public SimulationObject[] GetNeighbors(Vector2 position)
         {
-            const int neighborsCount = 15;  //we are get not only neighboring cells, but their neighbors too
+            const int neighborsCount = 24;  //we are get not only neighboring cells, but their neighbors too
             SimulationObject[] neighbors = new SimulationObject[neighborsCount];
 
             int neighborIterator = 0;
-            for(int i = -1; i <= position.X+ 1; i++)
+            for(int i = -2; i <= 2; i++)
             {
-                for(int j = -1; j <= position.Y+ 1; j++)
+                for(int j = -2; j <= 2; j++)
                 {
+                    if(i == 0 && j == 0)
+                    {
+                        continue;
+                    }
                     neighbors[neighborIterator] = GetAtPosition(new Vector2(position.X + i, position.Y + j));
+                    neighborIterator++;
                 }
             }
 
