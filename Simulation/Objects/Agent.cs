@@ -72,11 +72,6 @@ namespace NeuralLife.Simulation.Objects
                 Satiety += FoodSatiety;
                 data.Simulation.DestroyAtPosition(movePosition);
             }
-            else if(objectAtMovePosition is Spike)
-            {
-                data.Simulation.DestroyAtPosition(data.Position);
-                return;
-            }
             else
             {
                 Energy--;
