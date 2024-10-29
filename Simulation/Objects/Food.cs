@@ -8,5 +8,11 @@ namespace NeuralLife.Simulation.Objects
             Color = new Color(180, 0, 0);
         }
 
+        private const uint LifeTime = 100;
+
+        protected override void OnUpdate(ObjectEnvironmentData data)
+        {
+        }
+
     }
 }

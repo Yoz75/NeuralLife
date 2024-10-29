@@ -30,7 +30,7 @@ namespace NeuralLife.Simulation.Objects
             Random = new Random();
         }
 
-        public override void Update(ObjectEnvironmentData data)
+        protected override void OnUpdate(ObjectEnvironmentData data)
         {
             UpdateStats();
             if(Satiety <= 0f || Energy <= 0f)

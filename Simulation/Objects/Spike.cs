@@ -8,8 +8,9 @@ namespace NeuralLife.Simulation.Objects
             Color = new Color(100, 100, 100);
         }
 
-        public override void Update(ObjectEnvironmentData data)
+        protected override void OnUpdate(ObjectEnvironmentData data)
         {
+           
         }
     }
 }

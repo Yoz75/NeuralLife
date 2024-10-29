@@ -9,13 +9,19 @@ namespace NeuralLife.Simulation
         public Color Color;
         public bool ShallDestroyOnUpdate;
 
-        public virtual void Update(ObjectEnvironmentData data)
+        public void Update(ObjectEnvironmentData data)
         {
             if(ShallDestroyOnUpdate)
             {
                 data.Simulation.DestroyAtPosition(data.Position);
                 return;
             }
+            OnUpdate(data);
+            return;
+        }
+
+        protected virtual void OnUpdate(ObjectEnvironmentData data)
+        {
             return;
         }
 
