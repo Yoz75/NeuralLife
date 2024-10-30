@@ -9,3 +9,11 @@ Moving green (or not green) cells are bugs, every division their color some chan
 
 ## How does it works:
 Neural network sees 24 near cells (neighbors and their neighbors), knows self health and energy, then some magic and boom - it returns direction, where bug will move!
+
+## Controls:
+R - restart simulation (other properties will save)<br>
+Q - spawn spikes<br>
+T - increase food life time<br>
+Y - decrease food life time<br>
+Plus - increase food spawn count<br>
+Minus - decrease food spawn count<br>
