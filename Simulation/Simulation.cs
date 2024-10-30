@@ -22,14 +22,14 @@ namespace NeuralLife.Simulation
         {
             for(int i = 0; i < GameField.GetLength(0); i++)
             {
-                for (int j = 0; j < GameField.GetLength(1); j++)
+                for(int j = 0; j < GameField.GetLength(1); j++)
                 {
                     SetAtPosition(new T(), new Vector2(i, j));
                 }
             }
         }
 
-        public void FillIfType<TStart, TResult>(float fillChance) 
+        public void FillIfType<TStart, TResult>(float fillChance)
             where TResult : SimulationObject, new()
         {
             Random random = new Random();
@@ -80,7 +80,7 @@ namespace NeuralLife.Simulation
                 {
                     if(random.NextSingle() < fillChance)
                     {
-                        SetAtPosition(new T(), new Vector2(i, j));                       
+                        SetAtPosition(new T(), new Vector2(i, j));
                     }
                 }
             }
@@ -96,7 +96,7 @@ namespace NeuralLife.Simulation
                 {
                     if(GameField[i, j] == null)
                     {
-                        colors[i, j] =  new Color(0, 0, 0);
+                        colors[i, j] = new Color(0, 0, 0);
                         continue;
                     }
 
@@ -111,7 +111,7 @@ namespace NeuralLife.Simulation
         {
             int xResolution = GameField.GetLength(0);
             int yResolution = GameField.GetLength(1);
-            
+
             for(int i = 0; i < xResolution; i++)
             {
                 for(int j = 0; j < yResolution; j++)
@@ -162,7 +162,7 @@ namespace NeuralLife.Simulation
                 {
                     if(GetAtPosition(new Vector2(i, j)) is T)
                     {
-                        return new (position.X + i, position.Y + j);
+                        return new(position.X + i, position.Y + j);
                     }
                 }
             }
@@ -173,28 +173,21 @@ namespace NeuralLife.Simulation
         public Color[] GetNeighborsColors(Vector2 position)
         {
             const int neighborsCount = 24;  //we are get not only neighboring cells, but their neighbors too
-            Color[] neighbors = new Color[neighborsCount];
+            Color[] neighborsColors = new Color[neighborsCount];
 
-            int neighborIterator = 0;
-            for(int i = -2; i <= 2; i++)
+            var neighbors = GetNeighbors(position);
+
+            for(int i = 0; i < neighbors.Length; i++)
             {
-                for(int j = -2; j <= 2; j++)
+                if(neighbors[i] == null)
                 {
-                    if(i == 0 && j == 0)
-                    {
-                        continue;
-                    }
-                    if(GetAtPosition(new Vector2(position.X + i, position.Y + j)) == null)
-                    {
-                        neighbors[neighborIterator] = new Color(0, 0, 0);
-                        continue;
-                    }
-                    neighbors[neighborIterator] = GetAtPosition(new Vector2(position.X + i, position.Y + j)).Color;
-                    neighborIterator++;
+                    neighborsColors[i] = new Color(0, 0, 0);
+                    continue;
                 }
+                neighborsColors[i] = neighbors[i].Color;
             }
 
-            return neighbors;
+            return neighborsColors;
         }
 
         public SimulationObject[] GetNeighbors(Vector2 position)
@@ -245,7 +238,7 @@ namespace NeuralLife.Simulation
             }
             else if(yPosition >= GameField.GetLength(1))
             {
-                yPosition  = 0;
+                yPosition = 0;
             }
         }
 
