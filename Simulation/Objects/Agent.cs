@@ -30,6 +30,18 @@ namespace NeuralLife.Simulation.Objects
             Random = new Random();
         }
 
+        public void Damage(float damage)
+        {
+            if(Health - damage > 0)
+            {
+                Health -= damage;
+            }
+            else
+            {
+                ShallDestroyOnUpdate = true;
+            }
+        }
+
         protected override void OnUpdate(ObjectEnvironmentData data)
         {
             UpdateStats();

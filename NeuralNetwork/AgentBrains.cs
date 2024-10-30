@@ -30,7 +30,7 @@ namespace NeuralLife.NeuralNetwork
         }
 
         public const int InputNeuronsCount = 74;
-        public readonly int[] HiddenNeuronCounts = { 28, 28 };
+        public readonly int[] HiddenNeuronCounts = { 100, 100 };
         public const int OutputNeuronsCount = 4;
 
         private Device Device;

@@ -7,6 +7,7 @@ namespace NeuralLife.Simulation.Objects
         {
             Color = new Color(100, 100, 100);
         }
+        private static float Damage = 10.5f;
 
         protected override void OnUpdate(ObjectEnvironmentData data)
         {
@@ -15,7 +16,7 @@ namespace NeuralLife.Simulation.Objects
             {
                 if(neighbor is Agent)
                 {
-                    neighbor.ShallDestroyOnUpdate = true;
+                    (neighbor as Agent).Damage(Damage);
                 }
             }
         }
