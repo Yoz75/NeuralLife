@@ -19,7 +19,7 @@ namespace NeuralLife.Simulation.Objects
         public Agent()
         {
             Color = new Color(0, 220, 0);
-            Brains = new AgentBrains(cuda_is_available() ? CUDA : CPU);
+            Brains = new AgentBrains(CPU);
             Random = new Random();
         }
 
