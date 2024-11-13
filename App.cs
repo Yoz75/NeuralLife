@@ -106,7 +106,7 @@ namespace NeuralLife
                         }
 
                         //Plus near backspace also will work
-                        if(Input.IsKeyDown(Keys.Add) || Input.IsKeyPressed(Keys.Equal))
+                        if(Input.IsKeyDown(Keys.Add) || Input.IsKeyDown(Keys.Equal))
                         {
                             InvokeOnUpdate.Add(() => foodSpawnCount += foodSpawnStep);
                         }
