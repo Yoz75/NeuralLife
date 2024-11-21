@@ -17,6 +17,20 @@ namespace NeuralLife
         private List<Action> InvokeOnUpdate = new List<Action>();
 
         private Thread InputThread;
+        private float FoodSpawnCount = 0.002f;
+        private float AgentSpawnCount = 0.008f;
+        private const uint FoodLifetimeStep = 5;
+        private const float FoodSpawnStep = 0.0005f;
+        private const float SpikeSpawnCount = 0.001f;
+
+        public SimulationSettings GetSettings()
+        {
+            SimulationSettings settings = new SimulationSettings();
+            settings.IsFoodDispawn = Food.IsDispawn;
+            settings.FoodSpawnCount = FoodSpawnCount;
+            settings.FoodLifeTime = Food.UpdatesLifeTime;
+            return settings;
+        }
 
         public void Run()
         {
@@ -30,12 +44,6 @@ namespace NeuralLife
 
             Simulation.Simulation simulation = new((int)width, (int)height);
             Color[,] colors;
-
-            float foodSpawnCount = 0.002f;
-            float agentSpawnCount = 0.008f;
-            const uint foodLifetimeStep = 5;
-            const float foodSpawnStep = 0.0005f;
-            const float spikeSpawnCount = 0.001f;
 
             StartSimulation();
 
@@ -60,7 +68,7 @@ namespace NeuralLife
                 Renderer.Update();
                 Renderer.Render(colors);
 
-                simulation.RandomFillIfNull<Food>(foodSpawnCount);
+                simulation.RandomFillIfNull<Food>(FoodSpawnCount);
 
                 Thread.Sleep(10);
             }
@@ -69,8 +77,8 @@ namespace NeuralLife
             {
                 simulation = new((int)width, (int)height);
 
-                simulation.RandomFill<Food>(foodSpawnCount);
-                simulation.RandomFill<Agent>(agentSpawnCount);
+                simulation.RandomFill<Food>(FoodSpawnCount);
+                simulation.RandomFill<Agent>(AgentSpawnCount);
             }
 
             void GetInput()
@@ -80,7 +88,10 @@ namespace NeuralLife
                     Input.Update();
                     lock(InvokeOnUpdate)
                     {
-
+                        if(Input.IsKeyDown(Keys.S))
+                        {
+                            Renderer.ShowSimulationSettings(GetSettings());
+                        }
                         if(Input.IsKeyDown(Keys.R))
                         {
                             InvokeOnUpdate.Add(StartSimulation);
@@ -93,26 +104,26 @@ namespace NeuralLife
 
                         if(Input.IsKeyDown(Keys.T))
                         {
-                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += foodLifetimeStep);
+                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += FoodLifetimeStep);
                         }
                         else if(Input.IsKeyDown(Keys.Y))
                         {
-                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= foodLifetimeStep);
+                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= FoodLifetimeStep);
                         }
 
                         if(Input.IsKeyDown(Keys.Q))
                         {
-                            InvokeOnUpdate.Add(() => simulation.RandomFill<Spike>(spikeSpawnCount));
+                            InvokeOnUpdate.Add(() => simulation.RandomFill<Spike>(SpikeSpawnCount));
                         }
 
                         //Plus near backspace also will work
                         if(Input.IsKeyDown(Keys.Add) || Input.IsKeyDown(Keys.Equal))
                         {
-                            InvokeOnUpdate.Add(() => foodSpawnCount += foodSpawnStep);
+                            InvokeOnUpdate.Add(() => FoodSpawnCount += FoodSpawnStep);
                         }
                         else if(Input.IsKeyDown(Keys.Subtract))
                         {
-                            InvokeOnUpdate.Add(() => foodSpawnCount -= foodSpawnStep);
+                            InvokeOnUpdate.Add(() => FoodSpawnCount -= FoodSpawnStep);
                         }
                     }
                 }

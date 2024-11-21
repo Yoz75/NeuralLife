@@ -1,6 +1,7 @@
 ﻿
 using SFML.Graphics;
 using SFML.Window;
+using System;
 
 namespace NeuralLife.Rendering
 {
@@ -43,6 +44,18 @@ namespace NeuralLife.Rendering
 
             ScreenSprite.Draw(Window, states);
             Window.Display();
+        }
+
+        public void ShowSimulationSettings(SimulationSettings settings)
+        {
+            LogAsProperty("IsFoodDispawn", settings.IsFoodDispawn);
+            LogAsProperty("FoodLifeTime", settings.FoodLifeTime);
+            LogAsProperty("FoodSpawnCount", settings.FoodSpawnCount);
+        }
+
+        private void LogAsProperty<T>(string name, T value)
+        {
+            Console.WriteLine($"{name}: {value.ToString()}");
         }
     }
 }

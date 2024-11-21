@@ -7,5 +7,6 @@ namespace NeuralLife.Rendering
         public void Setup(uint xResolution, uint yResolution, string title);
         public void Update();
         public void Render(Color[,] screen);
+        public void ShowSimulationSettings(SimulationSettings settings);
     }
 }
