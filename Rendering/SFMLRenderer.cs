@@ -11,10 +11,17 @@ namespace NeuralLife.Rendering
         private Image ScreenBuffer;
         private Sprite ScreenSprite;
 
+        public bool IsWindowActive
+        {
+            get
+            {
+                return Window.HasFocus();
+            }
+        }
+
         public void Setup(uint xResolution, uint yResolution, string title)
         {
             VideoMode videoMode = new VideoMode(xResolution, yResolution);
-
             Window = new RenderWindow(videoMode, title, Styles.Default);
 
             Window.Closed += (_, _) => Window.Close();

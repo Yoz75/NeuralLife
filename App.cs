@@ -85,6 +85,13 @@ namespace NeuralLife
             {
                 while(true)
                 {
+                    lock(Renderer)
+                    {
+                        if(!Renderer.IsWindowActive)
+                        {
+                            continue;
+                        }
+                    }
                     Input.Update();
                     lock(InvokeOnUpdate)
                     {
