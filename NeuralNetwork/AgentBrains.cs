@@ -8,6 +8,11 @@ namespace NeuralLife.NeuralNetwork
 {
     public class AgentBrains : nn.Module<Tensor, Tensor>
     {
+        private enum ActivateFunctions
+        { 
+            Tanh = -1,
+            None = 0
+        }
         public AgentBrains(Device device) : base(nameof(AgentBrains))
         {
             Device = device;
@@ -18,7 +23,19 @@ namespace NeuralLife.NeuralNetwork
 
             for(int i = 0; i < HiddenNeuronCounts.Length - 1; i++)
             {
-                layers.Add(nn.Linear(HiddenNeuronCounts[i], HiddenNeuronCounts[i + 1], device: Device));
+                int nextLayerCountsIndex = HiddenNeuronCounts[i + 1];
+                if(nextLayerCountsIndex <= 0)
+                {
+                    nextLayerCountsIndex = HiddenNeuronCounts[i + 2];
+                }
+                if(HiddenNeuronCounts[i] == (int)ActivateFunctions.Tanh)
+                {
+                    layers.Add(nn.Tanh());
+                    i++; //strange, but we use "HiddenNeuronCounts[i + 1]" in line 33,
+                    //this will avoid torch exception
+                    continue;
+                }
+                layers.Add(nn.Linear(HiddenNeuronCounts[i], nextLayerCountsIndex, device: Device));
             }
 
             layers.Add(nn.Linear(HiddenNeuronCounts[^1], OutputNeuronsCount, device:device));
@@ -30,7 +47,7 @@ namespace NeuralLife.NeuralNetwork
         }
 
         public const int InputNeuronsCount = 74;
-        public readonly int[] HiddenNeuronCounts = { 100, 100, 100 };
+        public readonly int[] HiddenNeuronCounts = { 20, -1, 20, 20 };
         public const int OutputNeuronsCount = 4;
 
         private Device Device;
