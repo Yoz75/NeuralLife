@@ -7,12 +7,16 @@ namespace NeuralLife.Simulation.Objects
 {
     public class Agent : SimulationObject
     {
+        public static bool AllowColonialism;
         private const float FoodSatiety = 20f;
         private AgentBrains Brains;
 
         private float Health = 100f;
         private float Energy = 100f;
         private float Satiety = 100f;
+
+        private const float LowEnergyDamage = 2;
+        private const byte RequiredColonialismNeighbors = 3;
 
         private Random Random;
 
@@ -47,9 +51,35 @@ namespace NeuralLife.Simulation.Objects
             UpdateStats();
             if(Satiety <= 0f || Energy <= 0f)
             {
-                Health--;
+                if(!AllowColonialism)
+                {
+                    Damage(LowEnergyDamage);
+                    //shit
+                    goto afterLowEnergyDamage;
+                }
+
+                byte neighborsCount = 0;
+                for(int i = -1; i < 2; i++)
+                {
+                    for(int j = -1; j < 2; j++)
+                    {
+                        if(data.Simulation.GetAtPosition(
+                            new(data.Position.X + i,
+                            data.Position.Y + j)) is Agent)
+                        {
+
+                            neighborsCount++;
+                        }
+                    }
+                }
+
+                if(neighborsCount >= RequiredColonialismNeighbors)
+                {
+                    Damage(LowEnergyDamage / 2);    
+                }
             }
 
+        afterLowEnergyDamage:
             if(Health <= 0f)
             {
                 data.Simulation.DestroyAtPosition(data.Position);

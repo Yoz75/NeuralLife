@@ -29,6 +29,7 @@ namespace NeuralLife
             settings.IsFoodDispawn = Food.IsDispawn;
             settings.FoodSpawnCount = FoodSpawnCount;
             settings.FoodLifeTime = Food.UpdatesLifeTime;
+            settings.AllowColonialism = Agent.AllowColonialism;
             return settings;
         }
 
@@ -131,6 +132,11 @@ namespace NeuralLife
                         else if(Input.IsKeyDown(Keys.Subtract))
                         {
                             InvokeOnUpdate.Add(() => FoodSpawnCount -= FoodSpawnStep);
+                        }
+
+                        if(Input.IsKeyDown(Keys.C))
+                        {
+                            Agent.AllowColonialism = !Agent.AllowColonialism;
                         }
                     }
                 }

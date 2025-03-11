@@ -58,6 +58,7 @@ namespace NeuralLife.Rendering
             LogAsProperty("IsFoodDispawn", settings.IsFoodDispawn);
             LogAsProperty("FoodLifeTime", settings.FoodLifeTime);
             LogAsProperty("FoodSpawnCount", settings.FoodSpawnCount);
+            LogAsProperty("AllowColonialism", settings.AllowColonialism);
         }
 
         private void LogAsProperty<T>(string name, T value)
