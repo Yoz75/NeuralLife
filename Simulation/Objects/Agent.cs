@@ -54,32 +54,30 @@ namespace NeuralLife.Simulation.Objects
                 if(!AllowColonialism)
                 {
                     Damage(LowEnergyDamage);
-                    //shit
-                    goto afterLowEnergyDamage;
                 }
-
-                byte neighborsCount = 0;
-                for(int i = -1; i < 2; i++)
+                else
                 {
-                    for(int j = -1; j < 2; j++)
+                    byte neighborsCount = 0;
+                    for(int i = -1; i < 2; i++)
                     {
-                        if(data.Simulation.GetAtPosition(
-                            new(data.Position.X + i,
-                            data.Position.Y + j)) is Agent)
+                        for(int j = -1; j < 2; j++)
                         {
+                            if(data.Simulation.GetAtPosition(
+                                new(data.Position.X + i,
+                                data.Position.Y + j)) is Agent)
+                            {
 
-                            neighborsCount++;
+                                neighborsCount++;
+                            }
                         }
                     }
-                }
 
-                if(neighborsCount >= RequiredColonialismNeighbors)
-                {
-                    Damage(LowEnergyDamage / 2);    
+                    if(neighborsCount >= RequiredColonialismNeighbors)
+                    {
+                        Damage(LowEnergyDamage / 2);
+                    }
                 }
             }
-
-        afterLowEnergyDamage:
             if(Health <= 0f)
             {
                 data.Simulation.DestroyAtPosition(data.Position);
