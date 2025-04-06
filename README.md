@@ -1,4 +1,4 @@
-[![](https://img.youtube.com/vi/m3x4XqA91N4/0.jpg)](https://www.youtube.com/watch?v=m3x4XqA91N4](https://www.youtube.com/watch?v=m3x4XqA91N4))
+[![](https://img.youtube.com/vi/7xiCRcOfY3E/0.jpg)](https://www.youtube.com/watch?v=7xiCRcOfY3E](https://www.youtube.com/watch?v=7xiCRcOfY3E))
 
 ## Types:
 Red static cells are food, that bugs eat.<br>
