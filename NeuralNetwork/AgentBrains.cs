@@ -48,7 +48,7 @@ namespace NeuralLife.NeuralNetwork
 
         public const int InputNeuronsCount = 74;
         public readonly int[] HiddenNeuronCounts = { 20, -1, 20, 20 };
-        public const int OutputNeuronsCount = 4;
+        public const int OutputNeuronsCount = 10;
 
         private Device Device;
         private nn.Module<Tensor, Tensor> Model;
@@ -84,12 +84,13 @@ namespace NeuralLife.NeuralNetwork
             }
         }
 
-        public unsafe BrainsOutputData Forward(BrainsInputData input)
+        public BrainsOutputData Forward(BrainsInputData input)
         {
+            const int additionalInfoSize = 2;
+            const int availableCellsToEnterCount = 9;
             BrainsOutputData outputData = new();
 
-            //we don`t use alfa channel, so sizeof(Simulation.Color) - 1.
-            int tensorValuesSize = input.NeighborCellsColors.Length * (sizeof(Simulation.Color) - 1) + 2;
+            int tensorValuesSize = input.NeighborCellsColors.Length * Simulation.Color.SelfSize + additionalInfoSize;
 
             float[] tensorValues = new float[tensorValuesSize];
             for(int i = 0; i < tensorValuesSize - 2; i += 3)
@@ -109,37 +110,56 @@ namespace NeuralLife.NeuralNetwork
                 );
 
             var result = forward(inputData);
+                        
+            //Bias with the max weight will be the move direction.             
 
-            outputData.WillMove = result[0].item<float>() > 0.5f ? true : false;
+            float maxWeight = float.NegativeInfinity;
+            byte indexOfMaxWeight = 10;
 
-            var xBias = result[1].item<float>();
-            if(xBias < 0f)
+            for(byte i = 0; i < availableCellsToEnterCount; i++)
             {
-                outputData.MoveBias.X = -1;
-            }
-            else if(xBias == 0f)
-            {
-                outputData.MoveBias.X = 0;
-            }
-            else if(xBias > 0f)
-            {
-                outputData.MoveBias.X = 1;
+                if(result[i].item<float>() > maxWeight)
+                {
+                    indexOfMaxWeight = i;
+                    maxWeight = result[i].item<float>();
+                }
             }
 
-            var yBias = result[2].item<float>();
-            if(yBias < 0f)
+            //oh god, this is govnocode
+            switch(indexOfMaxWeight)
             {
-                outputData.MoveBias.Y = -1;
-            }
-            else if(yBias == 0f)
-            {
-                outputData.MoveBias.Y = 0;
-            }
-            else if(yBias > 0f)
-            {
-                outputData.MoveBias.Y = 1;
+                case 0:
+                    outputData.MoveBias = new(-1, -1);
+                    break;
+                case 1:
+                    outputData.MoveBias = new(-1, 0);
+                    break;
+                case 2:
+                    outputData.MoveBias = new(-1, 1);
+                    break;
+                case 3:
+                    outputData.MoveBias = new(0, -1);
+                    break;
+                case 4:
+                    outputData.MoveBias = new(0, 0);
+                    break;
+                case 5:
+                    outputData.MoveBias = new(0, 1);
+                    break;
+                case 6:
+                    outputData.MoveBias = new(1, -1);
+                    break;
+                case 7:
+                    outputData.MoveBias = new(1, 0);
+                    break;
+                case 8:
+                    outputData.MoveBias = new(1, 1);
+                    break;
+                default:
+                    throw new IndexOutOfRangeException($"index value {indexOfMaxWeight} was greater than 8!");
             }
 
+            //currently unused
             var willDivide = result[3].item<float>();
             if(willDivide < 0f)
             {

@@ -97,7 +97,7 @@ namespace NeuralLife.Simulation.Objects
 
             var objectAtMovePosition = data.Simulation.GetAtPosition(movePosition);
 
-            if(!outputData.WillMove)
+            if(outputData.MoveBias == Vector2.Zero)
             {
                 Satiety--;
                 return;
