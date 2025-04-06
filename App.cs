@@ -71,7 +71,6 @@ namespace NeuralLife
 
                 simulation.RandomFillIfNull<Food>(FoodSpawnCount);
 
-                Thread.Sleep(10);
             }
 
             void StartSimulation()
