@@ -111,11 +111,17 @@ namespace NeuralLife
 
                         if(Input.IsKeyDown(Keys.T))
                         {
-                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += FoodLifetimeStep);
+                            if(Food.UpdatesLifeTime < uint.MaxValue)
+                            {
+                                InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += FoodLifetimeStep);
+                            }
                         }
                         else if(Input.IsKeyDown(Keys.Y))
                         {
-                            InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= FoodLifetimeStep);
+                            if(Food.UpdatesLifeTime >= FoodLifetimeStep)
+                            { 
+                                InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= FoodLifetimeStep);
+                            }
                         }
 
                         if(Input.IsKeyDown(Keys.Q))
