@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.Window;
 using System;
+using Spectre.Console;
 
 namespace NeuralLife.Rendering
 {
@@ -41,7 +42,7 @@ namespace NeuralLife.Rendering
             {
                 for(uint j = 0; j < screen.GetLength(1); j++)
                 {
-                    ScreenBuffer.SetPixel(i, j, new Color(screen[i, j].AsUint()));
+                    ScreenBuffer.SetPixel(i, j, new SFML.Graphics.Color(screen[i, j].AsUint()));
                 }
             }
             Texture gpuAllocatedScreen = new Texture(ScreenBuffer);
@@ -55,15 +56,14 @@ namespace NeuralLife.Rendering
 
         public void ShowSimulationSettings(SimulationSettings settings)
         {
-            LogAsProperty("IsFoodDispawn", settings.IsFoodDispawn);
-            LogAsProperty("FoodLifeTime", settings.FoodLifeTime);
-            LogAsProperty("FoodSpawnCount", settings.FoodSpawnCount);
-            LogAsProperty("AllowColonialism", settings.AllowColonialism);
-        }
+            Table settingsTable = new Table().AddColumns("name", "value");
 
-        private void LogAsProperty<T>(string name, T value)
-        {
-            Console.WriteLine($"{name}: {value.ToString()}");
-        }
+            settingsTable.AddRow("IsFoodDispawn", settings.IsFoodDispawn.ToString());
+            settingsTable.AddRow("FoodLifeTime", settings.FoodLifeTime.ToString());
+            settingsTable.AddRow("FoodSpawnCount", settings.FoodSpawnCount.ToString());
+            settingsTable.AddRow("AllowColonialism", settings.AllowColonialism.ToString());
+
+            AnsiConsole.Write(settingsTable);
+        }   
     }
 }
