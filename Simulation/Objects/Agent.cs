@@ -101,7 +101,7 @@ namespace NeuralLife.Simulation.Objects
                 Satiety--;
                 return;
             }
-            if(objectAtMovePosition is Agent)
+            if(objectAtMovePosition is Agent || objectAtMovePosition is Spike)
             {
                 Satiety--;
                 return;
