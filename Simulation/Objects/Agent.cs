@@ -7,7 +7,6 @@ namespace NeuralLife.Simulation.Objects
 {
     public class Agent : SimulationObject
     {
-        public static bool AllowColonialism;
         private const float FoodSatiety = 20f;
         private AgentBrains Brains;
 
@@ -51,7 +50,7 @@ namespace NeuralLife.Simulation.Objects
             UpdateStats();
             if(Satiety <= 0f || Energy <= 0f)
             {
-                if(!AllowColonialism)
+                if(!SimulationSettings.AllowColonialism)
                 {
                     Damage(LowEnergyDamage);
                 }

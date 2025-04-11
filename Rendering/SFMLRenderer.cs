@@ -54,14 +54,14 @@ namespace NeuralLife.Rendering
             Window.Display();
         }
 
-        public void ShowSimulationSettings(SimulationSettings settings)
+        public void ShowSimulationSettings()
         {
             Table settingsTable = new Table().AddColumns("name", "value");
 
-            settingsTable.AddRow("IsFoodDispawn", settings.IsFoodDispawn.ToString());
-            settingsTable.AddRow("FoodLifeTime", settings.FoodLifeTime.ToString());
-            settingsTable.AddRow("FoodSpawnCount", settings.FoodSpawnCount.ToString());
-            settingsTable.AddRow("AllowColonialism", settings.AllowColonialism.ToString());
+            settingsTable.AddRow("IsFoodDispawn", SimulationSettings.IsFoodDispawn.ToString());
+            settingsTable.AddRow("FoodLifeTime", SimulationSettings.FoodLifeTime.ToString());
+            settingsTable.AddRow("FoodSpawnCount", SimulationSettings.FoodSpawnCount.ToString());
+            settingsTable.AddRow("AllowColonialism", SimulationSettings.AllowColonialism.ToString());
 
             AnsiConsole.Write(settingsTable);
         }   

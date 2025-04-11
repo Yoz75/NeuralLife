@@ -1,11 +1,11 @@
 ﻿
 namespace NeuralLife
 {
-    public struct SimulationSettings
+    public static class SimulationSettings
     {
-        public bool IsFoodDispawn;
-        public uint FoodLifeTime;
-        public float FoodSpawnCount;
-        public bool AllowColonialism;
+        public static bool IsFoodDispawn = true;
+        public static uint FoodLifeTime = 50;
+        public static float FoodSpawnCount = 0.01f;
+        public static bool AllowColonialism = false;
     }
 }

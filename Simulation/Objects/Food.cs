@@ -3,9 +3,6 @@ namespace NeuralLife.Simulation.Objects
 {
     public class Food : SimulationObject
     {
-        public static bool IsDispawn = true;
-        public static uint UpdatesLifeTime = 15;
-
         public Food()
         {
             Color = new Color(180, 0, 0);
@@ -15,11 +12,11 @@ namespace NeuralLife.Simulation.Objects
 
         protected override void OnUpdate(ObjectEnvironmentData data)
         {
-            if(IsDispawn)
+            if(SimulationSettings.IsFoodDispawn)
             {
                 LifeTime++;
             }
-            if(LifeTime >= UpdatesLifeTime)
+            if(LifeTime >= SimulationSettings.FoodLifeTime)
             {
                 ShallDestroyOnUpdate = true;
                 return;

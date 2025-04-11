@@ -17,21 +17,10 @@ namespace NeuralLife
         private List<Action> InvokeOnUpdate = new List<Action>();
 
         private Thread InputThread;
-        private float FoodSpawnCount = 0.002f;
         private float AgentSpawnCount = 0.008f;
         private const uint FoodLifetimeStep = 5;
         private const float FoodSpawnStep = 0.0005f;
         private const float SpikeSpawnCount = 0.001f;
-
-        public SimulationSettings GetSettings()
-        {
-            SimulationSettings settings = new SimulationSettings();
-            settings.IsFoodDispawn = Food.IsDispawn;
-            settings.FoodSpawnCount = FoodSpawnCount;
-            settings.FoodLifeTime = Food.UpdatesLifeTime;
-            settings.AllowColonialism = Agent.AllowColonialism;
-            return settings;
-        }
 
         public void Run()
         {
@@ -69,7 +58,7 @@ namespace NeuralLife
                 Renderer.Update();
                 Renderer.Render(colors);
 
-                simulation.RandomFillIfNull<Food>(FoodSpawnCount);
+                simulation.RandomFillIfNull<Food>(SimulationSettings.FoodSpawnCount);
 
             }
 
@@ -77,7 +66,7 @@ namespace NeuralLife
             {
                 simulation = new((int)width, (int)height);
 
-                simulation.RandomFill<Food>(FoodSpawnCount);
+                simulation.RandomFill<Food>(SimulationSettings.FoodSpawnCount);
                 simulation.RandomFill<Agent>(AgentSpawnCount);
             }
 
@@ -97,7 +86,7 @@ namespace NeuralLife
                     {
                         if(Input.IsKeyDown(Keys.S))
                         {
-                            Renderer.ShowSimulationSettings(GetSettings());
+                            Renderer.ShowSimulationSettings();
                         }
                         if(Input.IsKeyDown(Keys.R))
                         {
@@ -106,21 +95,21 @@ namespace NeuralLife
 
                         if(Input.IsKeyDown(Keys.Space))
                         {
-                            InvokeOnUpdate.Add(() => Food.IsDispawn = !Food.IsDispawn);
+                            InvokeOnUpdate.Add(() => SimulationSettings.IsFoodDispawn = !SimulationSettings.IsFoodDispawn);
                         }
 
                         if(Input.IsKeyDown(Keys.T))
                         {
-                            if(Food.UpdatesLifeTime < uint.MaxValue)
+                            if(SimulationSettings.FoodLifeTime < uint.MaxValue)
                             {
-                                InvokeOnUpdate.Add(() => Food.UpdatesLifeTime += FoodLifetimeStep);
+                                InvokeOnUpdate.Add(() => SimulationSettings.FoodLifeTime += FoodLifetimeStep);
                             }
                         }
                         else if(Input.IsKeyDown(Keys.Y))
                         {
-                            if(Food.UpdatesLifeTime >= FoodLifetimeStep)
+                            if(SimulationSettings.FoodLifeTime >= FoodLifetimeStep)
                             { 
-                                InvokeOnUpdate.Add(() => Food.UpdatesLifeTime -= FoodLifetimeStep);
+                                InvokeOnUpdate.Add(() => SimulationSettings.FoodLifeTime -= FoodLifetimeStep);
                             }
                         }
 
@@ -132,16 +121,16 @@ namespace NeuralLife
                         //Plus near backspace also will work
                         if(Input.IsKeyDown(Keys.Add) || Input.IsKeyDown(Keys.Equal))
                         {
-                            InvokeOnUpdate.Add(() => FoodSpawnCount += FoodSpawnStep);
+                            InvokeOnUpdate.Add(() => SimulationSettings.FoodSpawnCount += FoodSpawnStep);
                         }
                         else if(Input.IsKeyDown(Keys.Subtract))
                         {
-                            InvokeOnUpdate.Add(() => FoodSpawnCount -= FoodSpawnStep);
+                            InvokeOnUpdate.Add(() => SimulationSettings.FoodSpawnCount -= FoodSpawnStep);
                         }
 
                         if(Input.IsKeyDown(Keys.C))
                         {
-                            Agent.AllowColonialism = !Agent.AllowColonialism;
+                            SimulationSettings.AllowColonialism = !SimulationSettings.AllowColonialism;
                         }
                     }
                 }
