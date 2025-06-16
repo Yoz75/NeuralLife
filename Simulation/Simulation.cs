@@ -1,12 +1,11 @@
 ﻿
-using System;
-using System.Numerics;
+global using Vector2 = NeuralLife.Simulation.Vector2<int>;
 
+using System;
 namespace NeuralLife.Simulation
 {
     public class Simulation
     {
-
         public Simulation(int xResolution, int yResolution)
         {
             GameField = new SimulationObject[xResolution, yResolution];
@@ -64,7 +63,9 @@ namespace NeuralLife.Simulation
                     }
                     if(random.NextSingle() < fillChance)
                     {
-                        SetAtPosition(new T(), new Vector2(i, j));
+                        var instance = new T();
+                        instance.Simulation = this;
+                        SetAtPosition(instance, new Vector2(i, j));
                     }
                 }
             }
@@ -116,16 +117,15 @@ namespace NeuralLife.Simulation
             {
                 for(int j = 0; j < yResolution; j++)
                 {
-                    if(GameField[i, j] == null)
+                    var obj = GameField[i, j];
+                    if(obj == null)
                     {
                         continue;
-                    }
-                    ObjectEnvironmentData data = new();
-                    data.Simulation = this;
-                    data.Position.X = i;
-                    data.Position.Y = j;
+                    };
+                    obj.Simulation = this;
+                    obj.Position = new(i, j);
 
-                    GameField[i, j].Update(data);
+                    obj.Update();
                 }
             }
 
@@ -143,11 +143,19 @@ namespace NeuralLife.Simulation
 
             SetAtPosition(self, position);
             SetAtPosition(temp, selfPosition);
+
+            if(self != null)            
+                self.Position = position;
+            if(temp != null)
+                temp.Position = selfPosition;
         }
 
-        public void DestroyAtPosition(Vector2 position)
+        public void Destroy(SimulationObject self)
         {
-            SetAtPosition(null, position);
+            //if call OnDestroy before destroying, object could move it`s position in OnDestroy method
+            //and we could destroy another object
+            SetAtPosition(null, self.Position);
+            self.OnDestroy();
         }
 
         public Vector2 GetNeighborPositionOfType<T>(Vector2 position) where T : SimulationObject
@@ -155,7 +163,6 @@ namespace NeuralLife.Simulation
             const int neighborsCount = 15;  //we are get not only neighboring cells, but their neighbors too
             SimulationObject[] neighbors = new SimulationObject[neighborsCount];
 
-            int neighborIterator = 0;
             for(int i = -2; i <= 2; i++)
             {
                 for(int j = -2; j <= 2; j++)
@@ -214,8 +221,8 @@ namespace NeuralLife.Simulation
 
         public SimulationObject GetAtPosition(Vector2 position)
         {
-            int newX = (int)position.X;
-            int newY = (int)position.Y;
+            int newX = position.X;
+            int newY = position.Y;
             ToGameFieldBounds(ref newX, ref newY);
 
             return GameField[newX, newY];

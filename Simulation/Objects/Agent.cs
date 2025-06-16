@@ -1,6 +1,5 @@
 ﻿using NeuralLife.NeuralNetwork;
 using System;
-using System.Numerics;
 using static TorchSharp.torch;
 
 namespace NeuralLife.Simulation.Objects
@@ -14,7 +13,7 @@ namespace NeuralLife.Simulation.Objects
         private float Energy = 100f;
         private float Satiety = 100f;
 
-        private const float LowEnergyDamage = 2;
+        private const float LowEnergyDamage = 10;
         private const byte RequiredColonialismNeighbors = 3;
 
         private Random Random;
@@ -35,17 +34,15 @@ namespace NeuralLife.Simulation.Objects
 
         public void Damage(float damage)
         {
-            if(Health - damage > 0)
+            Health -= damage;
+
+            if(Health < 0)
             {
-                Health -= damage;
-            }
-            else
-            {
-                ShallDestroyOnUpdate = true;
+                Simulation.Destroy(this);
             }
         }
 
-        protected override void OnUpdate(ObjectEnvironmentData data)
+        protected override void OnUpdate()
         {
             UpdateStats();
             if(Satiety <= 0f || Energy <= 0f)
@@ -61,9 +58,9 @@ namespace NeuralLife.Simulation.Objects
                     {
                         for(int j = -1; j < 2; j++)
                         {
-                            if(data.Simulation.GetAtPosition(
-                                new(data.Position.X + i,
-                                data.Position.Y + j)) is Agent)
+                            if(Simulation.GetAtPosition(
+                                new(Position.X + i,
+                                Position.Y + j)) is Agent)
                             {
 
                                 neighborsCount++;
@@ -77,56 +74,62 @@ namespace NeuralLife.Simulation.Objects
                     }
                 }
             }
-            if(Health <= 0f)
-            {
-                data.Simulation.DestroyAtPosition(data.Position);
-                return;
-            }
 
             BrainsInputData inputData = new BrainsInputData();
             inputData.Health = Health;
             inputData.Energy = Energy;
 
-            inputData.NeighborCellsColors = data.Simulation.GetNeighborsColors(data.Position);
+            inputData.NeighborCellsColors = Simulation.GetNeighborsColors(Position);
 
             BrainsOutputData outputData = Brains.Forward(inputData);
 
-            var movePosition = new Vector2(data.Position.X + outputData.MoveBias.X,
-        data.Position.Y + outputData.MoveBias.Y);
+            var movePosition = new Vector2(Position.X + outputData.MoveBias.X,
+            Position.Y + outputData.MoveBias.Y);
 
-            var objectAtMovePosition = data.Simulation.GetAtPosition(movePosition);
+            var objectAtMovePosition = Simulation.GetAtPosition(movePosition);
 
             if(outputData.MoveBias == Vector2.Zero)
             {
                 Satiety--;
                 return;
             }
+
             if(objectAtMovePosition is Agent || objectAtMovePosition is Spike)
             {
-                Satiety--;
+                Simulation.Destroy(this);
                 return;
             }
             else if(objectAtMovePosition is Food)
             {
                 Satiety += FoodSatiety;
-                data.Simulation.DestroyAtPosition(movePosition);
+                Simulation.Destroy(objectAtMovePosition);
             }
             else
             {
                 Energy--;
-                data.Simulation.Swap
+                Simulation.Swap
                 (
-                    data.Position,
+                    Position,
                     movePosition
                 );
             }
 
-            if(Health >= 50f)
-            {
-                Divide(data.Position, data.Simulation);
-            }
-
             Satiety--;
+
+            if(SimulationSettings.EnableAutoDivide)
+            {
+                if(outputData.WillDivide)
+                {
+                    Divide();
+                }
+            }
+            else
+            {
+                if(Health > 50)
+                {
+                    Divide();
+                }
+            }
         }
 
         private void UpdateStats()
@@ -139,12 +142,13 @@ namespace NeuralLife.Simulation.Objects
             }
         }
 
-        private void Divide(Vector2 selfPosition, Simulation simulation)
+        private void Divide()
         {
             Color childColor = Color;
 
-            const int maxMutations = 16;
-            const float mutationsScope = 100f;
+            const int maxMutations = 5;
+            const float mutationsScope = 0.5f;
+            const int mutationsPerSample = 5;
 
             var mutatesCount = Random.Next(0, maxMutations);
 
@@ -152,19 +156,20 @@ namespace NeuralLife.Simulation.Objects
 
             for(int i = 0; i < mutatesCount; i++)
             {
-                brainsClone.MutateWeights(5, Random.NextSingle() * mutationsScope);
+                brainsClone.MutateWeights(mutationsPerSample, Random.NextSingle() * mutationsScope);
             }
+
             childColor = MutateColor(childColor, (byte)mutatesCount);
             Agent child = new Agent(childColor, brainsClone);
 
             child.Energy = Energy / 2;
             child.Satiety = Satiety / 2;
             child.Health = Health / 2;
+            child.Simulation = Simulation;
             Energy /= 2;
             Satiety /= 2;
             Health /= 2;
-            selfPosition.X += 1;
-            simulation.SetAtPosition(child, selfPosition);
+            Simulation.SetAtPosition(child, new(Position.X + 1, Position.Y));
         }
 
         private Color MutateColor(Color childColor, byte colorChange)

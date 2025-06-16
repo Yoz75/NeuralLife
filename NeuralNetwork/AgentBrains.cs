@@ -161,11 +161,11 @@ namespace NeuralLife.NeuralNetwork
 
             //currently unused
             var willDivide = result[3].item<float>();
-            if(willDivide < 0f)
+            if(willDivide <= 0f)
             {
                 outputData.WillDivide = false;
             }
-            if(willDivide > 0f)
+            else if(willDivide > 0f)
             {
                 outputData.WillDivide = true;
             }

@@ -1,29 +1,26 @@
 ﻿
-using System;
-
 namespace NeuralLife.Simulation
-{
-    public class SimulationObject
+{    public class SimulationObject
     {
         public string Name;
         public Color Color;
-        public bool ShallDestroyOnUpdate;
+        public Simulation Simulation;
+        public Vector2 Position;
 
-        public void Update(ObjectEnvironmentData data)
+        public void Update()
         {
-            if(ShallDestroyOnUpdate)
-            {
-                data.Simulation.DestroyAtPosition(data.Position);
-                return;
-            }
-            OnUpdate(data);
+            OnUpdate();
             return;
         }
 
-        protected virtual void OnUpdate(ObjectEnvironmentData data)
+        public virtual void OnDestroy()
         {
             return;
         }
 
+        protected virtual void OnUpdate()
+        {
+            return;
+        }
     }
 }

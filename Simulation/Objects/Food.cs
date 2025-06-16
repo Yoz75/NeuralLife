@@ -10,15 +10,15 @@ namespace NeuralLife.Simulation.Objects
 
         private uint LifeTime;
 
-        protected override void OnUpdate(ObjectEnvironmentData data)
+        protected override void OnUpdate()
         {
-            if(SimulationSettings.IsFoodDispawn)
+            if(SimulationSettings.EnableFoodDispawn)
             {
                 LifeTime++;
             }
             if(LifeTime >= SimulationSettings.FoodLifeTime)
             {
-                ShallDestroyOnUpdate = true;
+                Simulation.Destroy(this);
                 return;
             }
         }

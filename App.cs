@@ -22,17 +22,29 @@ namespace NeuralLife
         private const float FoodSpawnStep = 0.0005f;
         private const float SpikeSpawnCount = 0.001f;
 
+        private bool IsRunning = true;
+
+        private Simulation.Simulation Simulation;
+
+        public void Stop()
+        {
+            IsRunning = false;
+        }
+
+        public void StartSimulation()
+        {
+            Simulation = new(SimulationSettings.Width, SimulationSettings.Height);
+
+            Simulation.RandomFill<Food>(SimulationSettings.FoodSpawnCount);
+            Simulation.RandomFill<Agent>(AgentSpawnCount);
+        }
+
         public void Run()
         {
-            uint width = 160;
-            uint height = 96;
-
             Renderer = new SFMLRenderer();
             Input = new SFMLInput();
 
-            Renderer.Setup(width, height, "wow!");
-
-            Simulation.Simulation simulation = new((int)width, (int)height);
+            Renderer.Setup((uint)SimulationSettings.Width, (uint)SimulationSettings.Height, "wow!");
             Color[,] colors;
 
             StartSimulation();
@@ -41,7 +53,7 @@ namespace NeuralLife
             InputThread.Name = "Input handle thread";
             InputThread.Start();
 
-            while(true)
+            while(IsRunning)
             {
                 lock(InvokeOnUpdate)
                 {
@@ -53,26 +65,17 @@ namespace NeuralLife
 
                 InvokeOnUpdate.Clear();
 
-                simulation.Update();
-                colors = simulation.AsColors();
+                Simulation.Update();
+                colors = Simulation.AsColors();
                 Renderer.Update();
                 Renderer.Render(colors);
 
-                simulation.RandomFillIfNull<Food>(SimulationSettings.FoodSpawnCount);
-
-            }
-
-            void StartSimulation()
-            {
-                simulation = new((int)width, (int)height);
-
-                simulation.RandomFill<Food>(SimulationSettings.FoodSpawnCount);
-                simulation.RandomFill<Agent>(AgentSpawnCount);
+                Simulation.RandomFillIfNull<Food>(SimulationSettings.FoodSpawnCount);
             }
 
             void GetInput()
             {
-                while(true)
+                while(IsRunning)
                 {
                     lock(Renderer)
                     {
@@ -84,10 +87,6 @@ namespace NeuralLife
                     Input.Update();
                     lock(InvokeOnUpdate)
                     {
-                        if(Input.IsKeyDown(Keys.S))
-                        {
-                            Renderer.ShowSimulationSettings();
-                        }
                         if(Input.IsKeyDown(Keys.R))
                         {
                             InvokeOnUpdate.Add(StartSimulation);
@@ -95,7 +94,7 @@ namespace NeuralLife
 
                         if(Input.IsKeyDown(Keys.Space))
                         {
-                            InvokeOnUpdate.Add(() => SimulationSettings.IsFoodDispawn = !SimulationSettings.IsFoodDispawn);
+                            InvokeOnUpdate.Add(() => SimulationSettings.EnableFoodDispawn = !SimulationSettings.EnableFoodDispawn);
                         }
 
                         if(Input.IsKeyDown(Keys.T))
@@ -115,7 +114,7 @@ namespace NeuralLife
 
                         if(Input.IsKeyDown(Keys.Q))
                         {
-                            InvokeOnUpdate.Add(() => simulation.RandomFill<Spike>(SpikeSpawnCount));
+                            InvokeOnUpdate.Add(() => Simulation.RandomFill<Spike>(SpikeSpawnCount));
                         }
 
                         //Plus near backspace also will work

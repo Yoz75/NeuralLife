@@ -1,7 +1,6 @@
 ﻿
 using SFML.Graphics;
 using SFML.Window;
-using System;
 using Spectre.Console;
 
 namespace NeuralLife.Rendering
@@ -53,17 +52,5 @@ namespace NeuralLife.Rendering
             ScreenSprite.Draw(Window, states);
             Window.Display();
         }
-
-        public void ShowSimulationSettings()
-        {
-            Table settingsTable = new Table().AddColumns("name", "value");
-
-            settingsTable.AddRow("IsFoodDispawn", SimulationSettings.IsFoodDispawn.ToString());
-            settingsTable.AddRow("FoodLifeTime", SimulationSettings.FoodLifeTime.ToString());
-            settingsTable.AddRow("FoodSpawnCount", SimulationSettings.FoodSpawnCount.ToString());
-            settingsTable.AddRow("AllowColonialism", SimulationSettings.AllowColonialism.ToString());
-
-            AnsiConsole.Write(settingsTable);
-        }   
     }
 }

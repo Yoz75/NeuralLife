@@ -7,11 +7,11 @@ namespace NeuralLife.Simulation.Objects
         {
             Color = new Color(100, 100, 100);
         }
-        private static float Damage = 10.5f;
+        private static float Damage = 100000f;
 
-        protected override void OnUpdate(ObjectEnvironmentData data)
+        protected override void OnUpdate()
         {
-            var neighbors = data.Simulation.GetNeighbors(data.Position);
+            var neighbors = Simulation.GetNeighbors(Position);
             foreach(var neighbor in neighbors)
             {
                 if(neighbor is Agent)
