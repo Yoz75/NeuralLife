@@ -33,7 +33,7 @@ namespace NeuralLife
 
         public void StartSimulation()
         {
-            Simulation = new(SimulationSettings.Width, SimulationSettings.Height);
+            Simulation = new(Screen.Width, Screen.Height);
 
             Simulation.RandomFill<Food>(SimulationSettings.FoodSpawnCount);
             Simulation.RandomFill<Agent>(AgentSpawnCount);
@@ -44,7 +44,7 @@ namespace NeuralLife
             Renderer = new SFMLRenderer();
             Input = new SFMLInput();
 
-            Renderer.Setup((uint)SimulationSettings.Width, (uint)SimulationSettings.Height, "wow!");
+            Renderer.Setup((uint)Screen.Width, (uint)Screen.Height, "wow!");
             Color[,] colors;
 
             StartSimulation();
@@ -66,7 +66,7 @@ namespace NeuralLife
                 InvokeOnUpdate.Clear();
 
                 Simulation.Update();
-                colors = Simulation.AsColors();
+                colors = GetRenderColors();
                 Renderer.Update();
                 Renderer.Render(colors);
 
@@ -133,6 +133,17 @@ namespace NeuralLife
                         }
                     }
                 }
+            }
+        }
+
+        private Color[,] GetRenderColors()
+        {
+            switch(Screen.RenderMode)
+            {
+                case RenderMode.BaseColors:
+                    return Simulation.AsColors();
+                default:
+                    throw new InvalidOperationException($"Invalid render mode {Screen.RenderMode}!");
             }
         }
     }

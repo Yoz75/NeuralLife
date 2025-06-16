@@ -2,8 +2,7 @@
 namespace NeuralLife
 {
     public static class SimulationSettings
-    {
-        public static int Width = 160, Height = 96;
+    {        
         public static bool EnableFoodDispawn = true;
         public static uint FoodLifeTime = 50;
         public static float FoodSpawnCount = 0.01f;
