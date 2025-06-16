@@ -18,14 +18,14 @@ namespace NeuralLife.Rendering
             }
         }
 
-        public void Setup(uint xResolution, uint yResolution, string title)
+        public void Setup(string title)
         {
-            VideoMode videoMode = new VideoMode(xResolution, yResolution);
+            VideoMode videoMode = new VideoMode(Screen.Width, Screen.Height);
             Window = new RenderWindow(videoMode, title, Styles.Default);
 
             Window.Closed += (_, _) => Window.Close();
 
-            ScreenBuffer = new Image(xResolution, yResolution);
+            ScreenBuffer = new Image(Screen.Width, Screen.Height);
             ScreenSprite = new Sprite();
         }
 

@@ -44,7 +44,7 @@ namespace NeuralLife
             Renderer = new SFMLRenderer();
             Input = new SFMLInput();
 
-            Renderer.Setup((uint)Screen.Width, (uint)Screen.Height, "wow!");
+            Renderer.Setup("wow!");
             Color[,] colors;
 
             StartSimulation();

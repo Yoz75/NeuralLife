@@ -18,7 +18,7 @@ namespace NeuralLife.Rendering
         /// <param name="xResolution"></param>
         /// <param name="yResolution"></param>
         /// <param name="title"></param>
-        public void Setup(uint xResolution, uint yResolution, string title);
+        public void Setup(string title);
         public void Update();
         public void Render(Color[,] screen);
     }
