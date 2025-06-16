@@ -1,7 +1,6 @@
 ﻿
 using SFML.Graphics;
 using SFML.Window;
-using Spectre.Console;
 
 namespace NeuralLife.Rendering
 {
